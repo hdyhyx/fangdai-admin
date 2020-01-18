@@ -7,11 +7,11 @@
         </el-col>
         <el-col :sm="14" :md="12" :lg="12" :xl="7">
           <div class="search-container">
-            <el-input v-model="input3" placeholder="请输入内容" class="input-with-select">
+            <el-input v-model="input3" placeholder="请输入搜索内容" class="input-with-select">
               <el-select slot="prepend" v-model="select" placeholder="请选择">
-                <el-option label="餐厅名" value="1"></el-option>
-                <el-option label="订单号" value="2"></el-option>
-                <el-option label="用户电话" value="3"></el-option>
+                <el-option label="标题" value="1"></el-option>
+                <el-option label="作者" value="2"></el-option>
+                <el-option label="内容" value="3"></el-option>
               </el-select>
               <el-button slot="append">搜索</el-button>
             </el-input>
@@ -27,12 +27,12 @@
         <el-col :sm="24" :md="22" :lg="20" :xl="18">
           <el-card>
             <el-table :data="tableData" style="width: 100%">
-              <el-table-column label="标题" prop="date"></el-table-column>
-              <el-table-column label="作者" prop="name"></el-table-column>
+              <el-table-column label="标题" prop="title"></el-table-column>
+              <el-table-column label="作者" prop="author"></el-table-column>
               <el-table-column label="显示" prop="name"></el-table-column>
-              <el-table-column label="发布日期" prop="name"></el-table-column>
+              <el-table-column label="发布日期" prop="createDate"></el-table-column>
               <el-table-column label="置顶" width="50px" prop="name"></el-table-column>
-              <el-table-column align="right" min-width="100px">
+              <el-table-column align="right" width="250px">
                 <template slot="header" slot-scope="scope">
                   <div>操作</div>
                 </template>
@@ -42,13 +42,7 @@
                     icon="el-icon-edit"
                     type="primary"
                     @click="handleEdit(scope.$index, scope.row)"
-                  >查看</el-button>
-                  <el-button
-                    icon="el-icon-view"
-                    size="mini"
-                    type="warning"
-                    @click="handleEdit(scope.$index, scope.row)"
-                  >编辑</el-button>
+                  >查看 / 编辑</el-button>
                   <el-button
                     size="mini"
                     icon="el-icon-delete"
@@ -60,9 +54,9 @@
             </el-table>
             <div class="page-wrapper">
               <el-pagination
-                :current-page="currentPage4"
-                :page-sizes="[100, 200, 300, 400]"
-                :page-size="100"
+                :current-page="currentPage"
+                :page-sizes="[10, 20, 30, 40]"
+                :page-size="pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="400"
                 @size-change="handleSizeChange"
@@ -77,42 +71,83 @@
 </template>
 
 <script>
+import { newsList, deleteNews } from '@/api/news'
 export default {
   data() {
     return {
       input3: '',
       select: '',
-      currentPage4: 0,
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ]
+      currentPage: 1,
+      pageSize: 10,
+      tableData: []
     }
+  },
+  created() {
+    this.getNewsList(this.currentPage, this.pageSize)
   },
   methods: {
     handleEdit(index, row) {
       console.log(index, row)
+      this.$router.push({
+        path: '/news/update',
+        query: {
+          id: row.id
+        }
+      })
     },
     handleDelete(index, row) {
-      console.log(index, row)
+      this.$msgbox({
+        title: '消息',
+        message: '是否删除文章',
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            const formData = Object.assign(
+              {},
+              {
+                id: row.id
+              }
+            )
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            deleteNews(formData).then(res => {
+              instance.confirmButtonLoading = false
+              const { code, message } = res
+              if (code !== '200') {
+                this.$message.error(message)
+              } else {
+                this.$message.success(message)
+                this.getNewsList(this.currentPage, this.pageSize)
+                done()
+              }
+            })
+          } else {
+            done()
+          }
+        }
+      })
+    },
+    handleSizeChange() {},
+    handleCurrentChange() {},
+    getNewsList(pageNum, pageSize) {
+      const formData = Object.assign(
+        {},
+        {
+          pageNum,
+          pageSize
+        }
+      )
+      newsList(formData).then(res => {
+        console.log(res)
+        const { code, message, results } = res
+        if (code !== '200') {
+          this.$message.error(message)
+        } else {
+          this.tableData = results.result
+        }
+      })
     }
   }
 }

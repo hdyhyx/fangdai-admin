@@ -82,7 +82,7 @@ export const constantRoutes = [{
     },
     children: [{
         path: 'add',
-        name: '',
+        name: 'NewsAdd',
         component: () => import('@/views/news/Add/index'),
         meta: {
           title: '新建文章'
@@ -90,10 +90,19 @@ export const constantRoutes = [{
       },
       {
         path: 'manage',
-        name: '',
+        name: 'NewsManage',
         component: () => import('@/views/news/Manage/index'),
         meta: {
           title: '文章列表'
+        }
+      },
+      {
+        path: 'update',
+        name: 'NewsUpdate',
+        hidden: true,
+        component: () => import('@/views/news/Update/index'),
+        meta: {
+          title: '查看修改'
         }
       }
     ]

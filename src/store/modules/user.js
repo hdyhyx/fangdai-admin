@@ -1,7 +1,6 @@
 import {
   login,
-  logout,
-  getInfo
+  logout
 } from '@/api/user'
 import {
   getToken,
@@ -52,10 +51,11 @@ const actions = {
         password: password
       }).then(response => {
         const {
-          data
+          results: token
         } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        console.log(response)
+        commit('SET_TOKEN', token)
+        setToken(token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -69,26 +69,29 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const {
-          data
-        } = response
+      commit('SET_NAME', ['admin'])
+      commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
+      resolve(true)
+      // getInfo(state.token).then(response => {
+      //   const {
+      //     data
+      //   } = response
 
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
+      //   if (!data) {
+      //     reject('Verification failed, please Login again.')
+      //   }
 
-        const {
-          name,
-          avatar
-        } = data
+      //   const {
+      //     name,
+      //     avatar
+      //   } = data
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
+      //   commit('SET_NAME', name)
+      //   commit('SET_AVATAR', avatar)
+      //   resolve(data)
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 
