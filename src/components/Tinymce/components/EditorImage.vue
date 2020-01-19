@@ -5,7 +5,7 @@
       icon="el-icon-upload"
       size="mini"
       type="primary"
-      @click=" dialogVisible=true"
+      @click="dialogVisible=true"
     >上传图片</el-button>
     <el-dialog :visible.sync="dialogVisible">
       <el-upload
@@ -67,6 +67,7 @@ export default {
     handleSuccess(response, file) {
       const uid = file.uid
       const objKeyArr = Object.keys(this.listObj)
+      console.log(response.files.file)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
           this.listObj[objKeyArr[i]].url = response.files.file
@@ -89,6 +90,7 @@ export default {
       const _self = this
       const _URL = window.URL || window.webkitURL
       const fileName = file.uid
+      console.log(file)
       this.listObj[fileName] = {}
       return new Promise((resolve, reject) => {
         const img = new Image()

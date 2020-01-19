@@ -10,7 +10,7 @@
                 <el-input v-model="form.title" placeholder="请输入文章标题"></el-input>
               </el-form-item>
               <el-form-item label="作者">
-                <el-input v-model="form.name" style="width:200px" placeholder="请输入文章作者"></el-input>
+                <el-input v-model="form.author" style="width:200px" placeholder="请输入文章作者"></el-input>
               </el-form-item>
               <el-form-item label="是否精选">
                 <el-select v-model="form.Optimization" placeholder="请选择文章是否精选">

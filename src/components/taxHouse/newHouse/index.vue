@@ -6,6 +6,7 @@
     <div class="table">
       <el-row>
         <el-col :sm="24" :md="22" :lg="17" :xl="8">
+          <div class="title">房税</div>
           <el-table
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
             :border="true"
@@ -25,7 +26,7 @@
                 <span class="text">90㎡ 以下</span>
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.small">
+                <el-input v-model="scope.row.small" maxlength="3">
                   <template slot="append">%</template>
                 </el-input>
               </template>
@@ -35,7 +36,7 @@
                 <span class="text">90㎡ - 144㎡</span>
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.medium">
+                <el-input v-model="scope.row.medium" maxlength="3">
                   <template slot="append">%</template>
                 </el-input>
               </template>
@@ -45,8 +46,58 @@
                 <span class="text">144㎡ 以上</span>
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.large">
+                <el-input v-model="scope.row.large" maxlength="3">
                   <template slot="append">%</template>
+                </el-input>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+        <el-col :sm="24" :md="22" :lg="22" :xl="{span:12,offset:1}">
+          <div class="title">其余费用</div>
+          <el-table
+            :header-cell-style="{'background':'#3389FF','color':'#fff'}"
+            :border="true"
+            :data="otherTaxData"
+            style="width: 100%"
+          >
+            <el-table-column>
+              <template slot="header" slot-scope="scope">
+                <span class="text">印花税</span>
+              </template>
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.stampDuty">
+                  <template slot="append">元</template>
+                </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column>
+              <template slot="header" slot-scope="scope">
+                <span class="text">综合地价</span>
+              </template>
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.comprehensiveTax" maxlength="3">
+                  <template slot="append">%</template>
+                </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column>
+              <template slot="header" slot-scope="scope">
+                <span class="text">交易手续费</span>
+              </template>
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.poundage">
+                  <template slot="append">元</template>
+                </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column>
+              <template slot="header" slot-scope="scope">
+                <span class="text">产权登记费</span>
+              </template>
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.registration">
+                  <template slot="append">元</template>
                 </el-input>
               </template>
             </el-table-column>
@@ -86,7 +137,7 @@
               </template>
               <template slot-scope="scope">
                 <el-input v-model="scope.row.tax">
-                  <template slot="append">%</template>
+                  <template slot="append" maxlength="3">%</template>
                 </el-input>
               </template>
             </el-table-column>
@@ -118,20 +169,24 @@
                 <span class="text">税收</span>
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.tax">
+                <el-input v-model="scope.row.tax" maxlength="3">
                   <template slot="append">%</template>
                 </el-input>
               </template>
             </el-table-column>
           </el-table>
         </el-col>
-        <el-col :sm="24" :md="22" :lg="22" :xl="{span:12,offset:1}">
-          <div class="title">其余费用</div>
+        <el-col
+          :sm="{span:8,offset:1}"
+          :md="{span:8,offset:1}"
+          :lg="{span:8,offset:1}"
+          :xl="{span:4,offset:1}"
+        >
+          <div class="title">房屋维修基金</div>
           <el-table
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
             :border="true"
-            :span-method="objectSpanMethod"
-            :data="otherTaxData"
+            :data="elevatorData"
             style="width: 100%"
           >
             <el-table-column align="center" width="80px" prop="props">
@@ -144,57 +199,20 @@
             </el-table-column>
             <el-table-column>
               <template slot="header" slot-scope="scope">
-                <span class="text">印花税</span>
-              </template>
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.stampDuty">
-                  <template slot="append">元</template>
-                </el-input>
-              </template>
-            </el-table-column>
-            <el-table-column>
-              <template slot="header" slot-scope="scope">
-                <span class="text">综合地价</span>
-              </template>
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.comprehensiveTax">
-                  <template slot="append">%</template>
-                </el-input>
-              </template>
-            </el-table-column>
-            <el-table-column>
-              <template slot="header" slot-scope="scope">
                 <span class="text">房屋维修基金</span>
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.elevator">
+                <el-input v-model="scope.row.price">
                   <template slot="append">万元</template>
-                </el-input>
-              </template>
-            </el-table-column>
-            <el-table-column>
-              <template slot="header" slot-scope="scope">
-                <span class="text">交易手续费</span>
-              </template>
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.poundage">
-                  <template slot="append">%</template>
-                </el-input>
-              </template>
-            </el-table-column>
-            <el-table-column>
-              <template slot="header" slot-scope="scope">
-                <span class="text">产权登记费</span>
-              </template>
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.registration">
-                  <template slot="append">元</template>
                 </el-input>
               </template>
             </el-table-column>
           </el-table>
         </el-col>
       </el-row>
+      <div>
+        <el-button style="margin-top:20px;" @click="handelTaxSubmit">确定</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -203,24 +221,25 @@
 export default {
   data() {
     return {
-      otherTaxData: [
+      elevatorData: [
         {
           label: '有电梯',
-          stampDuty: '', //印花税
-          comprehensiveTax: '', //综合地价税率
-          elevator: '', //房屋维修进有电梯每平米价格
-          poundage: '', //手续费
-          registration: '', //登记费
+          price: '', //房屋维修进有电梯每平米价格
           type: 1
         },
         {
           label: '没有电梯',
-          elevator: '', //房屋维修金没电梯每平米价格
-          comprehensiveTax: '', //综合地价税率
+          price: '', //房屋维修金没电梯每平米价格
+          type: 2
+        }
+      ],
+      otherTaxData: [
+        {
           stampDuty: '', //印花税
+          comprehensiveTax: '', //综合地价税率
           poundage: '', //手续费
           registration: '', //登记费
-          type: 2
+          type: 1
         }
       ],
       personalIncomeTaxData: [
@@ -255,43 +274,101 @@ export default {
           label: '首套',
           small: '',
           medium: '',
-          large: ''
+          large: '',
+          type: 1
         },
         {
           label: '二套',
           small: '',
           medium: '',
-          large: ''
+          large: '',
+          type: 2
         },
         {
           label: '三套以上',
           small: '',
           medium: '',
-          large: ''
+          large: '',
+          type: 3
         }
       ]
     }
   },
   methods: {
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (
-        columnIndex === 1 ||
-        columnIndex === 2 ||
-        columnIndex === 4 ||
-        columnIndex === 5
-      ) {
-        if (rowIndex % 2 === 0) {
-          return {
-            rowspan: 2,
-            colspan: 1
-          }
+    handelTaxSubmit() {
+      this.processHouseTax(this.tableData)
+      this.processVATData(this.VATData)
+      this.processElevatorData(this.elevatorData)
+    },
+    processElevatorData(data) {
+      var newData = {}
+      data.forEach(item => {
+        if (item.type === 1) {
+          newData = Object.assign(newData, {
+            elevator: item.price
+          })
         } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          }
+          newData = Object.assign(newData, {
+            noElevator: item.price
+          })
         }
-      }
+      })
+      console.log(newData)
+    },
+    processPersonalTaxData(data) {
+      var newData = {}
+      data.forEach(item => {
+        if (item.type === 1) {
+          newData = Object.assign(newData, {
+            hasFiveYearOne: item.tax
+          })
+        } else {
+          newData = Object.assign(newData, {
+            noTwoYear: item.tax
+          })
+        }
+      })
+      console.log(newData)
+    },
+    processVATData(data) {
+      var newData = {}
+      data.forEach(item => {
+        if (item.type === 1) {
+          newData = Object.assign(newData, {
+            hasTwoYear: item.tax
+          })
+        } else {
+          newData = Object.assign(newData, {
+            noTwoYear: item.tax
+          })
+        }
+      })
+      console.log(newData)
+    },
+    processHouseTax(data) {
+      var newTax = {}
+      data.forEach((item, index) => {
+        if (index === 1) {
+          newTax = Object.assign(newTax, {
+            smallOne: item.small,
+            mediumOne: item.medium,
+            largeOne: item.large
+          })
+        } else if (index === 2) {
+          newTax = Object.assign(newTax, {
+            smallTwo: item.small,
+            mediumTwo: item.medium,
+            largeTwo: item.large
+          })
+        } else {
+          newTax = Object.assign(newTax, {
+            smallThree: item.small,
+            mediumThree: item.medium,
+            largeThree: item.large
+          })
+        }
+      })
+      console.log(newTax)
     }
   }
 }
@@ -300,8 +377,12 @@ export default {
 <style scoped lang="scss">
 .content {
   padding: 20px;
-  .label {
-    font-size: 16px;
+  .select-city {
+    margin-bottom: 16px;
+    margin-top: 20px;
+    .label {
+      font-size: 16px;
+    }
   }
   .table {
     margin: 20px 0;
