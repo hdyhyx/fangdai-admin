@@ -7,8 +7,9 @@
         </el-col>
         <el-col :sm="14" :md="12" :lg="12" :xl="7">
           <div class="search-container">
-            <el-input v-model="input3" placeholder="请输入内容" class="input-with-select">
+            <el-input v-model="input3" placeholder="请输入手机号" class="input-with-select">
               <el-select slot="prepend" v-model="select" placeholder="请选择">
+                <el-option label="全部" value="0"></el-option>
                 <el-option label="7天" value="1"></el-option>
                 <el-option label="30天" value="2"></el-option>
                 <el-option label="180天" value="3"></el-option>
@@ -23,7 +24,11 @@
       <el-row>
         <el-col :sm="24" :md="22" :lg="20" :xl="18">
           <el-card>
-            <el-table :data="tableData" style="width: 100%">
+            <el-table
+              :header-cell-style="{'background':'#3389FF','color':'#fff'}"
+              :data="tableData"
+              style="width: 100%"
+            >
               <el-table-column label="登录手机" prop="date"></el-table-column>
               <el-table-column label="登录密码" prop="name"></el-table-column>
               <el-table-column label="旧密码" prop="name"></el-table-column>
@@ -112,6 +117,9 @@ export default {
   padding: 0 20px;
   .head-wrapper {
     padding: 20px 0;
+    .table-head {
+      background: red;
+    }
     .title {
       font-size: 20px;
       font-weight: 600;

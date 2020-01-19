@@ -1,9 +1,9 @@
 <template>
-  <div class="news">
+  <div class="house-tax">
     <div class="head-wrapper">
       <el-row>
         <el-col :sm="6" :md="7" :lg="5" :xl="9">
-          <div class="title">文章管理</div>
+          <div class="title">房税管理</div>
         </el-col>
         <el-col :sm="14" :md="12" :lg="12" :xl="7">
           <div class="search-container">
@@ -18,25 +18,25 @@
           </div>
         </el-col>
         <el-col class="right" :sm="2" :md="2" :lg="2" :xl="1">
-          <el-button icon="el-icon-plus" type="primary" @click="handelAddNews">添加文章</el-button>
+          <el-button icon="el-icon-plus" type="primary" @click="handelAddCompute">添加算法</el-button>
         </el-col>
       </el-row>
     </div>
-    <div class="news-wrapper">
+    <div class="house-tax-wrapper">
       <el-row>
         <el-col :sm="24" :md="22" :lg="20" :xl="18">
           <el-card>
             <el-table
-              :header-cell-style="{'background':'#3389FF','color':'#fff'}"
+              :header-cell-style="{'background':'#EDEFFE','color':'#333'}"
+              :span-method="objectSpanMethod"
               :data="tableData"
               style="width: 100%"
               :border="true"
             >
-              <el-table-column label="标题" prop="title"></el-table-column>
-              <el-table-column label="作者" prop="author"></el-table-column>
-              <el-table-column label="显示" prop="name"></el-table-column>
+              <el-table-column label="城市" prop="city"></el-table-column>
+              <el-table-column label="计算方式" prop="author"></el-table-column>
+              <el-table-column label="计算公式" prop="name"></el-table-column>
               <el-table-column label="发布日期" prop="createDate"></el-table-column>
-              <el-table-column label="置顶" width="50px" prop="name"></el-table-column>
               <el-table-column align="right" width="250px">
                 <template slot="header" slot-scope="scope">
                   <div>操作</div>
@@ -85,11 +85,44 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      tableData: []
+      tableData: [
+        {
+          id: '12987122',
+          city: '全国通用',
+          name: '王小虎1',
+          amount1: '234',
+          amount2: '3.2',
+          amount3: 10
+        },
+        {
+          id: '12987123',
+          city: '厦门',
+          name: '王小虎2',
+          amount1: '165',
+          amount2: '4.43',
+          amount3: 10
+        },
+        {
+          id: '12987124',
+          city: '福州',
+          name: '王小虎',
+          amount1: '324',
+          amount2: '1.9',
+          amount3: 11
+        },
+        {
+          id: '12987125',
+          city: '上海',
+          name: '王小虎',
+          amount1: '621',
+          amount2: '2.2',
+          amount3: 11
+        }
+      ]
     }
   },
   created() {
-    this.getNewsList(this.currentPage, this.pageSize)
+    // this.getNewsList(this.currentPage, this.pageSize)
   },
   methods: {
     handleEdit(index, row) {
@@ -100,6 +133,21 @@ export default {
           id: row.id
         }
       })
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        if (rowIndex % 2 === 0) {
+          return {
+            rowspan: 2,
+            colspan: 1
+          }
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          }
+        }
+      }
     },
     handleDelete(index, row) {
       this.$msgbox({
@@ -135,9 +183,9 @@ export default {
         }
       })
     },
-    handelAddNews() {
+    handelAddCompute() {
       this.$router.push({
-        path: '/news/add'
+        path: '/algorithm/houseTaxAdd'
       })
     },
     handleSizeChange(pageSize) {
@@ -172,7 +220,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.news {
+.house-tax {
   padding: 0 20px;
   .head-wrapper {
     padding: 20px 0;
@@ -188,7 +236,7 @@ export default {
     }
   }
 
-  .news-wrapper {
+  .house-tax-wrapper {
   }
   .page-wrapper {
     padding-top: 40px;

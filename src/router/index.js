@@ -59,17 +59,57 @@ export const constantRoutes = [{
   {
     path: '/algorithm',
     component: Layout,
-    redirect: '/algorithm/add',
+    redirect: '/algorithm/mortgage',
     name: 'Algorithm',
+    meta: {
+      title: '算法管理',
+      icon: 'table'
+    },
     children: [{
-      path: 'add',
-      name: 'Add',
-      component: () => import('@/views/algorithm/index'),
-      meta: {
-        title: '算法管理',
-        icon: 'table'
+        path: 'mortgage',
+        name: 'Mortgage',
+        meta: {
+          title: '房贷管理'
+        },
+        component: () => import('@/views/algorithm/Mortgage/index'),
+        children: [{
+            path: 'add',
+            name: 'Add',
+            hidden: true,
+            meta: {
+              title: '房贷算法'
+            },
+            component: () => import('@/views/algorithm/Mortgage/Compute/index')
+          },
+          {
+            path: 'manage',
+            name: 'Manage',
+            hidden: true,
+            meta: {
+              title: '房贷列表'
+            },
+            component: () => import('@/views/algorithm/Mortgage/Manage/index')
+          }
+        ]
+      },
+      {
+        path: 'houseTax',
+        name: 'HouseTax',
+        meta: {
+          title: '房税管理'
+        },
+        component: () => import('@/views/algorithm/HouseTax/index')
+      },
+      {
+        path: 'houseTaxAdd',
+        name: 'HouseTaxAdd',
+        hidden: true,
+        meta: {
+          title: '房税算法'
+        },
+        component: () => import('@/views/algorithm/HouseTax/Compute/')
       }
-    }]
+    ]
   },
   {
     path: '/news',

@@ -1,9 +1,9 @@
 <template>
-  <div class="news">
+  <div class="mortgage">
     <div class="head-wrapper">
       <el-row>
         <el-col :sm="6" :md="7" :lg="5" :xl="9">
-          <div class="title">文章管理</div>
+          <div class="title">房贷管理</div>
         </el-col>
         <el-col :sm="14" :md="12" :lg="12" :xl="7">
           <div class="search-container">
@@ -18,21 +18,21 @@
           </div>
         </el-col>
         <el-col class="right" :sm="2" :md="2" :lg="2" :xl="1">
-          <el-button icon="el-icon-plus" type="primary" @click="handelAddNews">添加文章</el-button>
+          <el-button icon="el-icon-plus" type="primary" @click="handelAddNews">添加</el-button>
         </el-col>
       </el-row>
     </div>
-    <div class="news-wrapper">
+    <div class="mortgage-wrapper">
       <el-row>
         <el-col :sm="24" :md="22" :lg="20" :xl="18">
           <el-card>
             <el-table
-              :header-cell-style="{'background':'#3389FF','color':'#fff'}"
+              :header-cell-style="{'background':'#EDEFFE','color':'#333'}"
               :data="tableData"
               style="width: 100%"
               :border="true"
             >
-              <el-table-column label="标题" prop="title"></el-table-column>
+              <el-table-column label="城市" prop="title"></el-table-column>
               <el-table-column label="作者" prop="author"></el-table-column>
               <el-table-column label="显示" prop="name"></el-table-column>
               <el-table-column label="发布日期" prop="createDate"></el-table-column>
@@ -89,7 +89,7 @@ export default {
     }
   },
   created() {
-    this.getNewsList(this.currentPage, this.pageSize)
+    // this.getNewsList(this.currentPage, this.pageSize)
   },
   methods: {
     handleEdit(index, row) {
@@ -172,7 +172,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.news {
+.mortgage {
   padding: 0 20px;
   .head-wrapper {
     padding: 20px 0;
@@ -188,7 +188,7 @@ export default {
     }
   }
 
-  .news-wrapper {
+  .mortgage-wrapper {
   }
   .page-wrapper {
     padding-top: 40px;

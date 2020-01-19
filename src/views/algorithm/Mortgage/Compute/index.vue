@@ -4,7 +4,7 @@
       <div class="title">等额本息</div>
       <div class="container">
         <el-row>
-          <el-col :sm="24" :md="18" :lg="16" :xl="14">
+          <el-col :sm="24" :md="22" :lg="22" :xl="14">
             <el-card class="box-card">
               <span class="text">
                 贷款本金
@@ -47,14 +47,19 @@
           </el-col>
         </el-row>
       </div>
-      <div class="tabel-container">
+      <div class="table-container">
         <el-row>
-          <el-col :sm="24" :md="18" :lg="16" :xl="14">
+          <el-col :sm="24" :md="22" :lg="22" :xl="14">
             <el-card>
               <!-- <div class="btn">
                 <el-button>添加</el-button>
               </div>-->
-              <el-table :border="true" :data="tableData" style="width: 100%">
+              <el-table
+                :header-cell-style="{'background':'#3389FF','color':'#fff'}"
+                :border="true"
+                :data="tableData"
+                style="width: 100%"
+              >
                 <el-table-column align="center" width="60px" prop="props">
                   <template slot="header" slot-scope="scope">
                     <span class="text">参数</span>
@@ -136,7 +141,7 @@
       <div class="title">等额本息</div>
       <div class="container">
         <el-row>
-          <el-col :sm="24" :md="18" :lg="16" :xl="14">
+          <el-col :sm="24" :md="22" :lg="22" :xl="14">
             <el-card class="box-card">
               <span class="text">
                 贷款本金
@@ -179,14 +184,19 @@
           </el-col>
         </el-row>
       </div>
-      <div class="tabel-container">
+      <div class="table-container">
         <el-row>
-          <el-col :sm="24" :md="18" :lg="16" :xl="14">
+          <el-col :sm="24" :md="20" :lg="22" :xl="14">
             <el-card>
               <!-- <div class="btn">
                 <el-button>添加</el-button>
               </div>-->
-              <el-table :border="true" :data="tableData" style="width: 100%">
+              <el-table
+                :header-cell-style="{'background':'#3389FF','color':'#fff'}"
+                :border="true"
+                :data="tableData"
+                style="width: 100%"
+              >
                 <el-table-column align="center" width="60px" prop="props">
                   <template slot="header" slot-scope="scope">
                     <span class="text">参数</span>
@@ -324,8 +334,11 @@ export default {
         font-size: 18px;
       }
     }
-    .tabel-container {
+    .table-container {
       margin-top: 30px;
+      .table-head {
+        background: red;
+      }
       .btn {
         margin-bottom: 20px;
       }
