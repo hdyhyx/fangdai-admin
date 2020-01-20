@@ -34,7 +34,7 @@
               :border="true"
             >
               <el-table-column label="城市" prop="city"></el-table-column>
-              <el-table-column label="计算方式" prop="author"></el-table-column>
+              <el-table-column label="计算方式" prop="calculation"></el-table-column>
               <el-table-column label="计算公式" prop="name"></el-table-column>
               <el-table-column label="发布日期" prop="createDate"></el-table-column>
               <el-table-column align="right" width="250px">
@@ -87,24 +87,22 @@ export default {
       pageSize: 10,
       tableData: [
         {
-          id: '12987122',
           city: '全国通用',
           name: '王小虎1',
+          calculation: '新房',
           amount1: '234',
           amount2: '3.2',
           amount3: 10
         },
         {
-          id: '12987123',
-          city: '厦门',
+          calculation: '二手房商品',
           name: '王小虎2',
           amount1: '165',
           amount2: '4.43',
           amount3: 10
         },
         {
-          id: '12987124',
-          city: '福州',
+          calculation: '二手房经济',
           name: '王小虎',
           amount1: '324',
           amount2: '1.9',
@@ -135,10 +133,10 @@ export default {
       })
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0) {
-        if (rowIndex % 2 === 0) {
+      if (columnIndex === 0 || columnIndex === 4) {
+        if (rowIndex % 3 === 0) {
           return {
-            rowspan: 2,
+            rowspan: 3,
             colspan: 1
           }
         } else {

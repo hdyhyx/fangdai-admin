@@ -95,7 +95,7 @@ export default {
     handleEdit(index, row) {
       console.log(index, row)
       this.$router.push({
-        path: '/news/update',
+        path: '/algorithm/mortgage/add',
         query: {
           id: row.id
         }
@@ -137,7 +137,7 @@ export default {
     },
     handelAddNews() {
       this.$router.push({
-        path: '/news/add'
+        path: '/algorithm/MortgageAdd'
       })
     },
     handleSizeChange(pageSize) {

@@ -1,8 +1,29 @@
 <template>
   <div class="content">
-    <div class="select-city">
-      <span class="label">城市：</span>
-    </div>
+    <el-row>
+      <el-col :sm="24" :md="12" :lg="12" :xl="8">
+        <div class="select-city">
+          <span class="label">城市：</span>
+          <area-select
+            v-model="selected"
+            class="select"
+            type="code"
+            :level="1"
+            :data="pcaa"
+            @change="onChangeProvince"
+          ></area-select>
+        </div>
+      </el-col>
+      <el-col :sm="24" :md="12" :lg="12" :xl="8">
+        <div class="select-city">
+          <span>建议：</span>
+          <el-select v-model="remind" placeholder="请选择">
+            <el-option label="合同价" value="合同价"></el-option>
+            <el-option label="评估价" value="评估价"></el-option>
+          </el-select>
+        </div>
+      </el-col>
+    </el-row>
     <div class="table">
       <el-row>
         <el-col :sm="24" :md="22" :lg="17" :xl="8">
@@ -53,7 +74,7 @@
             </el-table-column>
           </el-table>
         </el-col>
-        <el-col :sm="24" :md="22" :lg="22" :xl="{span:12,offset:1}">
+        <el-col :sm="24" :md="22" :lg="18" :xl="{span:12,offset:1}">
           <div class="title">其余费用</div>
           <el-table
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
@@ -107,7 +128,7 @@
     </div>
     <div class="table">
       <el-row>
-        <el-col :sm="14" :md="12" :lg="8" :xl="6">
+        <el-col :sm="12" :md="12" :lg="10" :xl="6">
           <div class="title">增值税及附加税</div>
           <el-table
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
@@ -176,12 +197,7 @@
             </el-table-column>
           </el-table>
         </el-col>
-        <el-col
-          :sm="{span:8,offset:1}"
-          :md="{span:8,offset:1}"
-          :lg="{span:8,offset:1}"
-          :xl="{span:4,offset:1}"
-        >
+        <el-col :sm="{span:8}" :md="{span:8}" :lg="{span:8}" :xl="{span:4,offset:1}">
           <div class="title">房屋维修基金</div>
           <el-table
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
@@ -203,7 +219,7 @@
               </template>
               <template slot-scope="scope">
                 <el-input v-model="scope.row.price">
-                  <template slot="append">万元</template>
+                  <template slot="append">m²/元</template>
                 </el-input>
               </template>
             </el-table-column>
@@ -218,9 +234,17 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import { pcaa } from 'area-data' // v5 or higher
+import 'vue-area-linkage/dist/index.css' // v2 or higher
+import VueAreaLinkage from 'vue-area-linkage'
+Vue.use(VueAreaLinkage)
 export default {
   data() {
     return {
+      pcaa: pcaa,
+      selected: [],
+      remind: '合同价', //平估计
       elevatorData: [
         {
           label: '有电梯',
@@ -238,8 +262,7 @@ export default {
           stampDuty: '', //印花税
           comprehensiveTax: '', //综合地价税率
           poundage: '', //手续费
-          registration: '', //登记费
-          type: 1
+          registration: '' //登记费
         }
       ],
       personalIncomeTaxData: [
@@ -295,10 +318,44 @@ export default {
     }
   },
   methods: {
+    onChangeProvince(province) {
+      console.log(province)
+    },
     handelTaxSubmit() {
-      this.processHouseTax(this.tableData)
-      this.processVATData(this.VATData)
-      this.processElevatorData(this.elevatorData)
+      if (this.selected[0] === undefined || this.selected[0] === '') {
+        return this.$message.error('请选择省份')
+      }
+      if (this.selected[1] === undefined || this.selected[1] === '') {
+        return this.$message.error('请选择省份')
+      }
+      const houseTax = this.processHouseTax(this.tableData)
+      const VATTax = this.processVATData(this.VATData)
+      const PersonalTax = this.processPersonalTaxData(
+        this.personalIncomeTaxData
+      )
+      const elevatorPrice = this.processElevatorData(this.elevatorData)
+      const newTax = Object.assign(
+        houseTax,
+        VATTax,
+        PersonalTax,
+        elevatorPrice,
+        this.otherTaxData[0],
+        {
+          provinces: this.selected[0],
+          cityCode: this.selected[1],
+          remind: this.remind,
+          comprehensiveTax: this.percentage(
+            this.otherTaxData[0].comprehensiveTax
+          )
+        }
+      )
+      this.$emit('onMortgage', newTax)
+    },
+    percentage(data) {
+      if (!data) {
+        return ''
+      }
+      return parseInt(data) / 100
     },
     processElevatorData(data) {
       var newData = {}
@@ -313,62 +370,62 @@ export default {
           })
         }
       })
-      console.log(newData)
+      return newData
     },
     processPersonalTaxData(data) {
       var newData = {}
       data.forEach(item => {
         if (item.type === 1) {
           newData = Object.assign(newData, {
-            hasFiveYearOne: item.tax
+            hasFiveYearOne: this.percentage(item.tax)
           })
         } else {
           newData = Object.assign(newData, {
-            noTwoYear: item.tax
+            noFiveYearOne: this.percentage(item.tax)
           })
         }
       })
-      console.log(newData)
+      return newData
     },
     processVATData(data) {
       var newData = {}
       data.forEach(item => {
         if (item.type === 1) {
           newData = Object.assign(newData, {
-            hasTwoYear: item.tax
+            hasTwoYear: this.percentage(item.tax)
           })
         } else {
           newData = Object.assign(newData, {
-            noTwoYear: item.tax
+            noTwoYear: this.percentage(item.tax)
           })
         }
       })
-      console.log(newData)
+      return newData
     },
     processHouseTax(data) {
       var newTax = {}
       data.forEach((item, index) => {
         if (index === 1) {
           newTax = Object.assign(newTax, {
-            smallOne: item.small,
-            mediumOne: item.medium,
-            largeOne: item.large
+            smallOne: this.percentage(item.small),
+            mediumOne: this.percentage(item.medium),
+            largeOne: this.percentage(item.large)
           })
         } else if (index === 2) {
           newTax = Object.assign(newTax, {
-            smallTwo: item.small,
-            mediumTwo: item.medium,
-            largeTwo: item.large
+            smallTwo: this.percentage(item.small),
+            mediumTwo: this.percentage(item.medium),
+            largeTwo: this.percentage(item.large)
           })
         } else {
           newTax = Object.assign(newTax, {
-            smallThree: item.small,
-            mediumThree: item.medium,
-            largeThree: item.large
+            smallThree: this.percentage(item.small),
+            mediumThree: this.percentage(item.medium),
+            largeThree: this.percentage(item.large)
           })
         }
       })
-      console.log(newTax)
+      return newTax
     }
   }
 }
@@ -378,10 +435,15 @@ export default {
 .content {
   padding: 20px;
   .select-city {
-    margin-bottom: 16px;
     margin-top: 20px;
     .label {
+      position: relative;
+      top: 5px;
       font-size: 16px;
+      vertical-align: middle;
+    }
+    .select {
+      display: inline-block;
     }
   }
   .table {
