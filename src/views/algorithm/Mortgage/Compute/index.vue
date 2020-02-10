@@ -142,7 +142,7 @@
                 </el-col>
               </el-row>
               <div class="btn-wrap">
-                <el-button @click="onSubmit">确定</el-button>
+                <el-button @click="onSubmitInterest">确定</el-button>
               </div>
             </div>
           </div>
@@ -182,9 +182,16 @@
               <el-row>
                 <el-col :sm="24" :md="20" :lg="22" :xl="14">
                   <el-card>
-                    <!-- <div class="btn">
-                <el-button>添加</el-button>
-                    </div>-->
+                    <div class="select-wrapper">
+                      <span class="label">城市：</span>
+                      <area-select
+                        v-model="selected"
+                        class="select"
+                        type="code"
+                        :level="1"
+                        :data="pcaa"
+                      ></area-select>
+                    </div>
                     <el-table
                       :header-cell-style="{'background':'#3389FF','color':'#fff'}"
                       :border="true"
@@ -247,7 +254,7 @@
                 </el-col>
               </el-row>
               <div class="btn-wrap">
-                <el-button @click="onSubmit">确定</el-button>
+                <el-button @click="onSubmitPrincipal">确定</el-button>
               </div>
             </div>
           </div>
@@ -259,7 +266,8 @@
 
 <script>
 import Vue from 'vue'
-import { pcaa } from 'area-data' // v5 or higher
+import { addMortgage } from '@/api/tax'
+import { pcaa } from '@/utils/cityCode' // v5 or higher
 import 'vue-area-linkage/dist/index.css' // v2 or higher
 import VueAreaLinkage from 'vue-area-linkage'
 Vue.use(VueAreaLinkage)
@@ -309,12 +317,27 @@ export default {
       ]
     }
   },
+  created() {
+    console.log(this.pcaa)
+  },
   methods: {
-    onSubmit() {
-      console.log(this.tableData)
-      console.log(this.handleTableData(this.tableData))
+    onSubmitInterest() {
+      if (this.selected[1] === undefined || this.selected[1] === '') {
+        return this.$message.error('请选择城市')
+      }
+      const formData = Object.assign(
+        this.handleInterestData(this.principalAndInterestData),
+        {
+          provinces: this.selected[0],
+          cityCode: this.selected[1]
+        }
+      )
+      addMortgage(formData).then(res => {
+        console.log(res)
+      })
     },
-    handleTableData(data) {
+    onSubmitPrincipal() {},
+    handleInterestData(data) {
       var newData = {}
       data.forEach(item => {
         if (item.type === 1) {

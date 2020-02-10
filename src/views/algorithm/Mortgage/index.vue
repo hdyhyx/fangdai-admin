@@ -1,5 +1,5 @@
 <template>
-  <div class="mortgage">
+  <div class="mortgage-tax">
     <div class="head-wrapper">
       <el-row>
         <el-col :sm="6" :md="7" :lg="5" :xl="9">
@@ -18,11 +18,11 @@
           </div>
         </el-col>
         <el-col class="right" :sm="2" :md="2" :lg="2" :xl="1">
-          <el-button icon="el-icon-plus" type="primary" @click="handelAddNews">添加</el-button>
+          <el-button icon="el-icon-plus" type="primary" @click="handelAddCompute">添加算法</el-button>
         </el-col>
       </el-row>
     </div>
-    <div class="mortgage-wrapper">
+    <div class="mortgage-tax-wrapper">
       <el-row>
         <el-col :sm="24" :md="22" :lg="20" :xl="18">
           <el-card>
@@ -32,11 +32,18 @@
               style="width: 100%"
               :border="true"
             >
-              <el-table-column label="城市" prop="title"></el-table-column>
-              <el-table-column label="作者" prop="author"></el-table-column>
-              <el-table-column label="显示" prop="name"></el-table-column>
+              <el-table-column label="城市">
+                <template slot-scope="scope">
+                  <div>{{ findCity(scope.row.provinces,scope.row.cityCode) }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="计算方式">
+                <template slot-scope="scope">
+                  <div>{{ handleHouseType(scope.row.houseType) }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="计算公式" prop="name"></el-table-column>
               <el-table-column label="发布日期" prop="createDate"></el-table-column>
-              <el-table-column label="置顶" width="50px" prop="name"></el-table-column>
               <el-table-column align="right" width="250px">
                 <template slot="header" slot-scope="scope">
                   <div>操作</div>
@@ -76,7 +83,9 @@
 </template>
 
 <script>
-import { newsList, deleteNews } from '@/api/news'
+import { deleteNews } from '@/api/news'
+import { findCityName } from '@/utils/utils'
+import { mortgageTaxList } from '@/api/tax'
 export default {
   data() {
     return {
@@ -85,21 +94,52 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
+      cityCode: '',
       tableData: []
     }
   },
   created() {
-    // this.getNewsList(this.currentPage, this.pageSize)
+    this.getMortgageTaxList(this.cityCode, this.currentPage, this.pageSize)
   },
   methods: {
+    findCity(provinces, city) {
+      return findCityName(provinces, city)
+    },
     handleEdit(index, row) {
       console.log(index, row)
       this.$router.push({
-        path: '/algorithm/mortgage/add',
+        path: '/news/update',
         query: {
           id: row.id
         }
       })
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        if (rowIndex % 3 === 0) {
+          return {
+            rowspan: 3,
+            colspan: 1
+          }
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          }
+        }
+      }
+    },
+    handleHouseType(type) {
+      switch (type) {
+        case '1':
+          return '新房'
+        case '2':
+          return '二手商品房'
+        case '3':
+          return '二手经济房'
+        default:
+          break
+      }
     },
     handleDelete(index, row) {
       this.$msgbox({
@@ -135,44 +175,45 @@ export default {
         }
       })
     },
-    handelAddNews() {
+    handelAddCompute() {
       this.$router.push({
-        path: '/algorithm/MortgageAdd'
+        path: '/algorithm/mortgageAdd'
       })
     },
-    handleSizeChange(pageSize) {
-      this.currentPage = 1
-      this.getNewsList(this.currentPage, pageSize)
-    },
-    handleCurrentChange(pageNum) {
-      this.currentPage = 1
-      this.getNewsList(pageNum, this.pageSize)
-    },
-    getNewsList(pageNum, pageSize) {
+    getMortgageTaxList(cityCode, pageNum, pageSize) {
       const formData = Object.assign(
         {},
         {
+          cityCode,
           pageNum,
           pageSize
         }
       )
-      newsList(formData).then(res => {
-        console.log(res)
+      mortgageTaxList(formData).then(res => {
         const { code, message, results } = res
         if (code !== '200') {
           this.$message.error(message)
         } else {
-          this.tableData = results.result
-          this.totalPage = results.totalPage
+          console.log(results.list)
+          this.tableData = results.list
+          this.totalPage = results.totalElements
         }
       })
+    },
+    handleSizeChange(pageSize) {
+      this.currentPage = 1
+      this.getMortgageTaxList(this.currentPage, pageSize)
+    },
+    handleCurrentChange(pageNum) {
+      this.currentPage = 1
+      this.getHouseTaxList(pageNum, this.pageSize)
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.mortgage {
+.mortgage-tax {
   padding: 0 20px;
   .head-wrapper {
     padding: 20px 0;
@@ -188,7 +229,7 @@ export default {
     }
   }
 
-  .mortgage-wrapper {
+  .mortgage-tax-wrapper {
   }
   .page-wrapper {
     padding-top: 40px;

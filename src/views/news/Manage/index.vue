@@ -7,13 +7,14 @@
         </el-col>
         <el-col :sm="14" :md="12" :lg="12" :xl="7">
           <div class="search-container">
-            <el-input v-model="input3" placeholder="请输入搜索内容" class="input-with-select">
+            <el-input v-model="searchInput" placeholder="请输入搜索内容" class="input-with-select">
               <el-select slot="prepend" v-model="select" placeholder="请选择">
+                <el-option label="全部" value="0"></el-option>
                 <el-option label="标题" value="1"></el-option>
                 <el-option label="作者" value="2"></el-option>
                 <el-option label="内容" value="3"></el-option>
               </el-select>
-              <el-button slot="append">搜索</el-button>
+              <el-button slot="append" @click="onNewsSearch">搜索</el-button>
             </el-input>
           </div>
         </el-col>
@@ -80,18 +81,55 @@ import { newsList, deleteNews } from '@/api/news'
 export default {
   data() {
     return {
-      input3: '',
+      searchInput: '',
+      searchData: {
+        title: '',
+        author: '',
+        newsContent: ''
+      },
       select: '',
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
+
       tableData: []
     }
   },
   created() {
-    this.getNewsList(this.currentPage, this.pageSize)
+    this.getNewsList(this.currentPage, this.pageSize, this.searchData)
   },
   methods: {
+    onNewsSearch() {
+      switch (this.select) {
+        case '0':
+          this.resetSearchData()
+          this.getNewsList(this.currentPage, this.pageSize, this.searchData)
+          break
+        case '1':
+          this.searchData.title = this.searchInput
+          this.getNewsList(this.currentPage, this.pageSize, this.searchData)
+          break
+        case '2':
+          this.searchData.author = this.searchInput
+          this.getNewsList(this.currentPage, this.pageSize, this.searchData)
+          break
+        case '3':
+          this.searchData.newsContent = this.searchInput
+          this.getNewsList(this.currentPage, this.pageSize, this.searchData)
+          break
+
+        default:
+          this.$message.error('请选择搜索类型')
+          break
+      }
+    },
+    resetSearchData() {
+      this.searchData = {
+        title: '',
+        author: '',
+        newsContent: ''
+      }
+    },
     handleEdit(index, row) {
       console.log(index, row)
       this.$router.push({
@@ -148,14 +186,11 @@ export default {
       this.currentPage = 1
       this.getNewsList(pageNum, this.pageSize)
     },
-    getNewsList(pageNum, pageSize) {
-      const formData = Object.assign(
-        {},
-        {
-          pageNum,
-          pageSize
-        }
-      )
+    getNewsList(pageNum, pageSize, searchData) {
+      const formData = Object.assign(searchData, {
+        pageNum,
+        size: pageSize
+      })
       newsList(formData).then(res => {
         console.log(res)
         const { code, message, results } = res
@@ -163,7 +198,7 @@ export default {
           this.$message.error(message)
         } else {
           this.tableData = results.result
-          this.totalPage = results.totalPage
+          this.totalPage = results.totalElements
         }
       })
     }

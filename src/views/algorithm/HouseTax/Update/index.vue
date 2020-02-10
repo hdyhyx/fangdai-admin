@@ -44,7 +44,7 @@
 </template>
 <script>
 import NewHouse from '@/components/taxHouse/newHouse/'
-import { addHouseTax } from '@/api/tax'
+import { addHouseTax, houseTaxDetail } from '@/api/tax'
 export default {
   components: {
     NewHouse
@@ -127,6 +127,12 @@ export default {
       ]
     }
   },
+  created() {
+    const cityCode = this.$route.query.city
+    const houseType = this.$route.query.houseType
+    this.activeName = this.$route.query.houseType
+    this.getTaxDetail(cityCode, houseType)
+  },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event)
@@ -141,6 +147,47 @@ export default {
           this.$message.error(message)
         } else {
           this.$message.success(message)
+        }
+      })
+    },
+    handelElevatorData(noElevator, elevator) {
+      this.elevatorData[0].price = elevator || 0
+      this.elevatorData[1].price = noElevator || 0
+    },
+    getTaxDetail(cityCode, houseType) {
+      const formData = Object.assign(
+        {},
+        {
+          cityCode,
+          houseType
+        }
+      )
+      houseTaxDetail(formData).then(res => {
+        const { code, results, message } = res
+        if (code !== '200') {
+          return this.$message.error(message)
+        } else {
+          console.log(results)
+          for (let index = 0; index < results.length; index++) {
+            const item = results[index]
+            if (index === 0) {
+              console.log(item)
+              this.handelElevatorData(item.noElevator, item.elevator)
+              this.remind = item.remind
+              this.selected = [] //城市
+              const otherTaxItem = Object.assign(
+                {},
+                {
+                  stampDuty: item.stampDuty, //印花税
+                  comprehensiveTax: item.comprehensiveTax, //综合地价税率
+                  poundage: item.poundage, //手续费
+                  registration: item.registration //登记费
+                }
+              )
+              this.otherTaxData[0] = otherTaxItem
+              console.log(this.otherTaxData)
+            }
+          }
         }
       })
     }

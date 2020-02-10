@@ -71,7 +71,16 @@ export const constantRoutes = [{
         meta: {
           title: '房贷管理'
         },
-        component: () => import('@/views/algorithm/Mortgage/index')
+        component: () => import('@/views/algorithm/Mortgage/Manage/')
+      },
+      {
+        path: 'houseUpdate',
+        name: 'HouseUpdate',
+        hidden: true,
+        meta: {
+          title: '房税管理'
+        },
+        component: () => import('@/views/algorithm/HouseTax/Update/')
       },
       {
         path: 'houseTax',
@@ -79,7 +88,7 @@ export const constantRoutes = [{
         meta: {
           title: '房税管理'
         },
-        component: () => import('@/views/algorithm/HouseTax/index')
+        component: () => import('@/views/algorithm/HouseTax/Manage/')
       },
       {
         path: 'houseTaxAdd',
@@ -97,7 +106,7 @@ export const constantRoutes = [{
         meta: {
           title: '房贷算法'
         },
-        component: () => import('@/views/algorithm/Mortgage/Compute/index')
+        component: () => import('@/views/algorithm/Mortgage/Compute/')
       }
     ]
   },

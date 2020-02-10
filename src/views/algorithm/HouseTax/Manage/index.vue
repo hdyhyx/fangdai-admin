@@ -28,13 +28,20 @@
           <el-card>
             <el-table
               :header-cell-style="{'background':'#EDEFFE','color':'#333'}"
-              :span-method="objectSpanMethod"
               :data="tableData"
               style="width: 100%"
               :border="true"
             >
-              <el-table-column label="城市" prop="city"></el-table-column>
-              <el-table-column label="计算方式" prop="calculation"></el-table-column>
+              <el-table-column label="城市">
+                <template slot-scope="scope">
+                  <div>{{ findCity(scope.row.cityCode,scope.row.cityCode) }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="计算方式">
+                <template slot-scope="scope">
+                  <div>{{ handleHouseType(scope.row.houseType) }}</div>
+                </template>
+              </el-table-column>
               <el-table-column label="计算公式" prop="name"></el-table-column>
               <el-table-column label="发布日期" prop="createDate"></el-table-column>
               <el-table-column align="right" width="250px">
@@ -76,7 +83,9 @@
 </template>
 
 <script>
-import { newsList, deleteNews } from '@/api/news'
+import { deleteNews } from '@/api/news'
+import { findCityName } from '@/utils/utils'
+import { houseTaxList } from '@/api/tax'
 export default {
   data() {
     return {
@@ -85,55 +94,29 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      tableData: [
-        {
-          city: '全国通用',
-          name: '王小虎1',
-          calculation: '新房',
-          amount1: '234',
-          amount2: '3.2',
-          amount3: 10
-        },
-        {
-          calculation: '二手房商品',
-          name: '王小虎2',
-          amount1: '165',
-          amount2: '4.43',
-          amount3: 10
-        },
-        {
-          calculation: '二手房经济',
-          name: '王小虎',
-          amount1: '324',
-          amount2: '1.9',
-          amount3: 11
-        },
-        {
-          id: '12987125',
-          city: '上海',
-          name: '王小虎',
-          amount1: '621',
-          amount2: '2.2',
-          amount3: 11
-        }
-      ]
+      cityCode: '000000',
+      tableData: []
     }
   },
   created() {
-    // this.getNewsList(this.currentPage, this.pageSize)
+    this.getHouseTaxList(this.cityCode, this.currentPage, this.pageSize)
   },
   methods: {
+    findCity(provinces, city) {
+      return findCityName(provinces, city)
+    },
     handleEdit(index, row) {
       console.log(index, row)
       this.$router.push({
-        path: '/news/update',
+        path: '/algorithm/houseUpdate',
         query: {
-          id: row.id
+          city: row.cityCode,
+          houseType: row.houseType
         }
       })
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0 || columnIndex === 4) {
+      if (columnIndex === 0) {
         if (rowIndex % 3 === 0) {
           return {
             rowspan: 3,
@@ -145,6 +128,18 @@ export default {
             colspan: 0
           }
         }
+      }
+    },
+    handleHouseType(type) {
+      switch (type) {
+        case '1':
+          return '新房'
+        case '2':
+          return '二手商品房'
+        case '3':
+          return '二手经济房'
+        default:
+          break
       }
     },
     handleDelete(index, row) {
@@ -186,32 +181,32 @@ export default {
         path: '/algorithm/houseTaxAdd'
       })
     },
-    handleSizeChange(pageSize) {
-      this.currentPage = 1
-      this.getNewsList(this.currentPage, pageSize)
-    },
-    handleCurrentChange(pageNum) {
-      this.currentPage = 1
-      this.getNewsList(pageNum, this.pageSize)
-    },
-    getNewsList(pageNum, pageSize) {
+    getHouseTaxList(cityCode, pageNum, pageSize) {
       const formData = Object.assign(
         {},
         {
+          cityCode,
           pageNum,
           pageSize
         }
       )
-      newsList(formData).then(res => {
-        console.log(res)
+      houseTaxList(formData).then(res => {
         const { code, message, results } = res
         if (code !== '200') {
           this.$message.error(message)
         } else {
-          this.tableData = results.result
-          this.totalPage = results.totalPage
+          this.tableData = results.list
+          this.totalPage = results.totalElements
         }
       })
+    },
+    handleSizeChange(pageSize) {
+      this.currentPage = 1
+      this.getHouseTaxList(this.currentPage, pageSize)
+    },
+    handleCurrentChange(pageNum) {
+      this.currentPage = 1
+      this.getHouseTaxList(pageNum, this.pageSize)
     }
   }
 }

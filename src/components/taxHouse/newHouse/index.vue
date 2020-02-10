@@ -77,6 +77,7 @@
         <el-col :sm="24" :md="22" :lg="18" :xl="{span:12,offset:1}">
           <div class="title">其余费用</div>
           <el-table
+            v-if="otherTaxData.length"
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
             :border="true"
             :data="otherTaxData"
@@ -133,7 +134,7 @@
           <el-table
             :header-cell-style="{'background':'#3389FF','color':'#fff'}"
             :border="true"
-            :data="VATData"
+            :data="vatData"
             style="width: 100%"
           >
             <el-table-column align="center" width="80px" prop="props">
@@ -235,87 +236,48 @@
 
 <script>
 import Vue from 'vue'
-import { pcaa } from 'area-data' // v5 or higher
+import { pcaa } from '@/utils/cityCode' // v5 or higher
 import 'vue-area-linkage/dist/index.css' // v2 or higher
 import VueAreaLinkage from 'vue-area-linkage'
 Vue.use(VueAreaLinkage)
 export default {
+  props: {
+    selected: {
+      type: Array,
+      default: () => []
+    },
+    remind: {
+      type: String,
+      default: '合同价'
+    },
+    elevatorData: {
+      type: Array,
+      default: () => []
+    },
+    otherTaxData: {
+      type: Array,
+      default: () => []
+    },
+    personalIncomeTaxData: {
+      type: Array,
+      default: () => []
+    },
+    tableData: {
+      type: Array,
+      default: () => []
+    },
+    vatData: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      pcaa: pcaa,
-      selected: [],
-      remind: '合同价', //平估计
-      elevatorData: [
-        {
-          label: '有电梯',
-          price: '', //房屋维修进有电梯每平米价格
-          type: 1
-        },
-        {
-          label: '没有电梯',
-          price: '', //房屋维修金没电梯每平米价格
-          type: 2
-        }
-      ],
-      otherTaxData: [
-        {
-          stampDuty: '', //印花税
-          comprehensiveTax: '', //综合地价税率
-          poundage: '', //手续费
-          registration: '' //登记费
-        }
-      ],
-      personalIncomeTaxData: [
-        {
-          label: '满五唯一',
-          tax: '',
-          type: 1
-        },
-        {
-          label: '非满五唯一',
-          tax: '',
-          type: 2
-        }
-      ],
-      VATData: [
-        {
-          label: '公式一',
-          text: '满两年',
-          tax: '',
-          type: 1
-        },
-        {
-          label: '公式二',
-          text: '不满两年',
-          tax: '',
-          type: 2
-        }
-      ],
-
-      tableData: [
-        {
-          label: '首套',
-          small: '',
-          medium: '',
-          large: '',
-          type: 1
-        },
-        {
-          label: '二套',
-          small: '',
-          medium: '',
-          large: '',
-          type: 2
-        },
-        {
-          label: '三套以上',
-          small: '',
-          medium: '',
-          large: '',
-          type: 3
-        }
-      ]
+      pcaa: pcaa
     }
+  },
+  created() {
+    console.log(this.otherTaxData)
   },
   methods: {
     onChangeProvince(province) {
@@ -329,7 +291,7 @@ export default {
         return this.$message.error('请选择省份')
       }
       const houseTax = this.processHouseTax(this.tableData)
-      const VATTax = this.processVATData(this.VATData)
+      const VATTax = this.processvatData(this.vatData)
       const PersonalTax = this.processPersonalTaxData(
         this.personalIncomeTaxData
       )
@@ -387,7 +349,7 @@ export default {
       })
       return newData
     },
-    processVATData(data) {
+    processvatData(data) {
       var newData = {}
       data.forEach(item => {
         if (item.type === 1) {
